@@ -1,0 +1,58 @@
+#ifndef SUDOKU_INTERNAL_CONSTANTS_H
+#define SUDOKU_INTERNAL_CONSTANTS_H
+
+#if defined(COMPILE_ALDER_LAKE_DDR4)
+#include "intel_core_12th_ddr4.h"
+#elif defined(COMPILE_ALDER_LAKE_DDR5)
+#include "intel_core_12th_ddr5.h"
+#elif defined(COMPILE_RAPTOR_LAKE)
+#include "intel_core_14th_ddr5.h"
+#elif defined(COMPILE_ZEN_4)
+#include "amd_ryzen_zen4_ddr5.h"
+#else
+#error "Please add the appropriate header files in compile options."
+#endif
+
+#define SUDOKU_TEST_NUM_ITERATION 16384
+
+#define DRAMA_MINIMUM_SET_SIZE 64
+
+#define SUDOKU_MAX_NUM_TRIALS 16384
+#define SUDOKU_NUM_EFFECTIVE_TRIAL 1024
+#define SUDOKU_TRIAL_SUCCESS_SCORE (1024 - 64)
+#define SUDOKU_TRIAL_FAILURE_SCORE 64
+// refer to the ZenHammer's additional filter sequence
+#define SUDOKU_FILTER_SCORE 4
+
+#define SUDOKU_CONFLICT_NUM_ITERATION 300
+#define SUDOKU_REFRESH_NUM_ITERATION 1024
+#define SUDOKU_CONSECUTIVE_NUM_ITERATION 512
+
+// DRAM timings
+#define SBDR_LOWER_BOUND SBDR_LOWER_BOUND_
+#define SBDR_UPPER_BOUND SBDR_UPPER_BOUND_
+#define REFRESH_CYCLE_LOWER_BOUND REFRESH_CYCLE_LOWER_BOUND_
+#define REFRESH_CYCLE_UPPER_BOUND REFRESH_CYCLE_UPPER_BOUND_
+#define REGULAR_REFRESH_INTERVAL_THRESHOLD REGULAR_REFRESH_INTERVAL_THRESHOLD_
+
+#define CONSECUTIVE_LENGTH 8
+#define BANK_GROUP_THRESHOLD BANK_GROUP_THRESHOLD_
+
+// Testing
+#define TESTING_STATISTICS_NUM_PAIRS (1024ULL * 1024ULL)
+#define TESTING_CHECKING_NUM_PAIRS (8ULL * 1024ULL)
+
+// DRAM addressing functions
+#define FUNCTION_MIN_NUM_BITS 1
+#define FUNCTION_MAX_NUM_BITS 12
+
+// Processor-specific
+#define CACHELINE_OFFSET 6
+
+// AMD-specific (refer to "ZenHammer: Rowhammer Attacks on AMD Zen-based
+// Platforms," USENIX Security, 2024)
+#define PCI_OFFSET_UPPER_BOUND PCI_OFFSET_UPPER_BOUND_
+#define PCI_OFFSET_LOWER_BOUND PCI_OFFSET_LOWER_BOUND_
+#define PCI_OFFSET (PCI_OFFSET_UPPER_BOUND - PCI_OFFSET_LOWER_BOUND)
+
+#endif  // SUDOKU_INTERNAL_CONSTANTS_H

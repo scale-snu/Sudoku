@@ -1,0 +1,6 @@
+.vscode/*
+build/*
+*.out
+*.csv
+*.log
+*.png
