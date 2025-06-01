@@ -121,4 +121,6 @@ This project is licensed under the MIT License (see [LICENSE](./LICENSE)).
 
 ## Contact
 
-Minbok Wi (minbok.wi@scale.snu.ac.kr)
+Please open an issue if you have questions or issues!
+
+Minbok Wi (minbok.wi@scale.snu.ac.kr or homakaka@snu.ac.kr)
