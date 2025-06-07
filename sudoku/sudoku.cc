@@ -152,7 +152,8 @@ uint64_t Sudoku::GetNumColumnBits() const {
 }
 
 uint64_t Sudoku::GetNumRankDimmFunctions() const {
-  return static_cast<uint64_t>(std::log2(GetNumRankDimms(memory_config_)));
+  return (uint64_t)(std::log2(memory_config_->num_dimms_per_channel)) +
+	  dram_config_->num_rank_bits;
 }
 
 uint64_t Sudoku::GetNumBankAddressFunctions() const {

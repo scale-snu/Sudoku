@@ -748,7 +748,6 @@ void Addressing::DecomposeUsingRefreshes() {
   if (type_ == "DDR4" || type_ == "ddr4") {
     refresh_oracle = AverageRefreshIntervalPairedAccessFine;
   } else if (type_ == "DDR5" || type_ == "ddr5") {
-    std::cerr << "coarse!\n";
     refresh_oracle = AverageRefreshIntervalPairedAccessCoarse;
   } else {
     // unsupported (lpddr5/x)
@@ -801,28 +800,20 @@ void Addressing::DecomposeUsingRefreshes() {
                  reinterpret_cast<void*>(function), normal_interval_score,
                  reduced_interval_score);
 
-#if defined(COMPILE_ZEN_4)
-    if (normal_interval_score > SUDOKU_TRIAL_SUCCESS_SCORE) {
-      channel_functions_.push_back(function);
-    }
-#else
     if (reduced_interval_score > SUDOKU_TRIAL_SUCCESS_SCORE) {
+      // AMD: reduced_refresh_intervals: sub-channel, DIMM, and rank
       rank_functions_.push_back(function);
     }
-#endif
   }
 
   std::ostringstream oss;
-#if defined(COMPILE_ZEN_4)
-  for (const auto& function : channel_functions_) {
-    oss << reinterpret_cast<void*>(function) << ",";
-  }
-  logger->info("{}[+] Insert to channel functions: {}{}", color_green,
-               oss.str(), color_reset);
-#else
   for (const auto& function : rank_functions_) {
     oss << reinterpret_cast<void*>(function) << ",";
   }
+#if defined(COMPILE_ZEN_4)
+  logger->info("{}[+] Insert to rank, dimm, and sub-channel functions: {}{}",
+	       color_green, oss.str(), color_reset);
+#else
   logger->info("{}[+] Insert to rank functions: {}{}", color_green, oss.str(),
                color_reset);
 #endif
@@ -911,32 +902,18 @@ void Addressing::DecomposeUsingConsecutiveAccesses() {
             [](const auto& a, const auto& b) { return a.second < b.second; });
 
   std::ostringstream oss;
-#if defined(COMPILE_ZEN_4)
-  // First N high rdrd latency functions are rank/dimm functions
-  uint64_t num_high_rdrd_latency = GetNumRankDimmFunctions();
-  uint64_t num_functions = rdrd_latencies.size();
-
-  for (size_t i = 0; i < num_high_rdrd_latency; ++i) {
-    rank_functions_.push_back(rdrd_latencies[num_functions - i - 1].first);
-  }
-
-  for (const auto& function : rank_functions_) {
-    oss << reinterpret_cast<void*>(function) << ",";
-  }
-  logger->info("{}[+] Insert to rank functions: {}{}", color_green, oss.str(),
-               color_reset);
-#else
   // First N high rdrd latency functions are rank/dimm and bank address
   // functions.
-  uint64_t num_high_rdrd_latency =
-      GetNumRankDimmFunctions() + GetNumBankAddressFunctions();
+  uint64_t num_high_rdrd_latency = 2; // bank address
   uint64_t num_functions = rdrd_latencies.size();
-
-  for (size_t i = 0; i < num_high_rdrd_latency; ++i) {
+  for (size_t i = 0; i < num_functions; ++i) {
     uint64_t f = rdrd_latencies[num_functions - i - 1].first;
     if (std::find(rank_functions_.begin(), rank_functions_.end(), f) ==
         rank_functions_.end()) {
       bank_address_functions_.push_back(f);
+      if (bank_address_functions_.size() == num_high_rdrd_latency) {
+	break;
+      }
     }
   }
 
@@ -945,7 +922,6 @@ void Addressing::DecomposeUsingConsecutiveAccesses() {
   }
   logger->info("{}[+] Insert to bank address functions: {}{}", color_green,
                oss.str(), color_reset);
-#endif
 
   delete ftuple;
   delete stuple;

@@ -29,7 +29,7 @@ static const char help_msg[] =
       --rank,      -r [INT]     Number of ranks per DRAM module
       --width,     -w [INT]     DQ width of DRAM ([8], 16, or 32)
       --same       -S [HEXes]   Constraints: same DRAM mapping functions in hex, separated by commas (for check mode)
-      --diff,      -F [HEXes]   Constraints: diff DRAM mapping functions in hex, separated by commas (for check mode)
+      --diff,      -D [HEXes]   Constraints: diff DRAM mapping functions in hex, separated by commas (for check mode)
       --row,       -R [HEX]     DRAM row bits (for check mode)
       --column,    -C [HEX]     DRAM column bits (for check mode)
 

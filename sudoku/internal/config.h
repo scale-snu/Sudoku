@@ -74,7 +74,7 @@ struct DRAMConfig {
         chip_size(16ULL * GB),
         num_rank_bits(1),
         num_subchannel_bits(0),
-        num_bank_group_bits(0),
+        num_bank_group_bits(2),
         num_bank_address_bits(2),
         num_row_bits(17),
         num_column_bits(10) {}
