@@ -800,12 +800,16 @@ void Addressing::DecomposeUsingRefreshes() {
                  reinterpret_cast<void*>(function), normal_interval_score,
                  reduced_interval_score);
 
+    // need to update!
     if (reduced_interval_score > SUDOKU_TRIAL_SUCCESS_SCORE) {
       // AMD: reduced_refresh_intervals: sub-channel, DIMM, and rank
+      // Intel with DDR4: reduced_refresh_intervals: channel, DIMM, and rank
+      // Intel with DDR5: reduced_refresh_intervals: channel, sub-channel, 
+      //    and bank address (a single)
       rank_functions_.push_back(function);
     }
   }
-
+  /*
   std::ostringstream oss;
   for (const auto& function : rank_functions_) {
     oss << reinterpret_cast<void*>(function) << ",";
@@ -813,10 +817,14 @@ void Addressing::DecomposeUsingRefreshes() {
 #if defined(COMPILE_ZEN_4)
   logger->info("{}[+] Insert to rank, dimm, and sub-channel functions: {}{}",
 	       color_green, oss.str(), color_reset);
-#else
+#elif defined(COMPILE_ALDER_LAKE_DDR4)
   logger->info("{}[+] Insert to rank functions: {}{}", color_green, oss.str(),
                color_reset);
+#else
+  logger->info("{}[+] Insert to channel, sub-channel, and bank address functions: {}{}",
+          color_green, oss.str(), color_reset);
 #endif
+  */
   delete ftuple;
   delete stuple;
 }
@@ -900,7 +908,7 @@ void Addressing::DecomposeUsingConsecutiveAccesses() {
   // sort
   std::sort(rdrd_latencies.begin(), rdrd_latencies.end(),
             [](const auto& a, const auto& b) { return a.second < b.second; });
-
+  /*
   std::ostringstream oss;
   // First N high rdrd latency functions are rank/dimm and bank address
   // functions.
@@ -922,6 +930,7 @@ void Addressing::DecomposeUsingConsecutiveAccesses() {
   }
   logger->info("{}[+] Insert to bank address functions: {}{}", color_green,
                oss.str(), color_reset);
+  */
 
   delete ftuple;
   delete stuple;
